@@ -2,7 +2,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
-  name: string;
   temperature: string | void;
 };
 
@@ -11,15 +10,12 @@ export default async function handler(
   res: NextApiResponse<Data>,
 ) {
   const temperature = await getForecast()
-  res.status(200).json({ name: "John Doe", temperature:temperature });
+  res.status(200).json({temperature:temperature });
 }
 
 const getForecast = async () => {
-  const forecastResponse = await fetch("https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,wind_speed_10m")
+  const forecastResponse = await fetch("https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=temperature_2m_max,temperature_2m_min&timezone=GMT")
   const forecast = await forecastResponse.json()
-  console.log(`latitude: ${forecast.latitude} 
-  longitude:  ${forecast.longitude}
-  temperature: ${forecast.current.temperature_2m}`)
-  return forecast.current.temperature_2m
+  return forecast.daily
 }
 
